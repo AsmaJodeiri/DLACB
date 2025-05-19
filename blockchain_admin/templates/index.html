@@ -1,0 +1,233 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Blockchain Admin</title>
+    <link rel="stylesheet" href="/static/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/vendor/DataTables/css/datatables.min.css">
+    <link rel="stylesheet" href="/static/vendor/font-awesome/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/css/custom.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a href="#" class="navbar-brand">Blockchain Admin</a>
+
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a href="/" class="nav-link">System Setup</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/confirm_user" class="nav-link">Confirm Users</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container alert alert-secondary">
+        <form id="key_generator_form">
+            <div class="row">
+                <label class="col-sm-2">Landa:</label>
+                <div class="col-sm-10">
+                    <input type="text" name="landa" id="landa" class="form-control">
+                </div>
+            </div>
+            <br>
+
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <input type="button" name="generate_key" id="generate_key" class="btn btn-primary btn-lg" value="Generate System Key">
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="container alert alert-secondary">
+        <form id="setup_transaction_form">
+            <div class="row">
+                <label class="col-sm-2">System Public Key:</label>
+                <div class="col-sm-10">
+                    <input type="text" name="admin_public_key" id="admin_public_key" class="form-control">
+                </div>
+            </div>
+
+            <br>
+
+            <div class="row">
+                <label class="col-sm-2">System Private Key:</label>
+                <div class="col-sm-10">
+                    <input type="text" name="admin_private_key" id="admin_private_key" class="form-control">
+                </div>
+            </div>
+
+            <br>
+            <div class="row">
+                <label class="col-sm-2">Universal Attribute:</label>
+                <div class="col-sm-10">
+                    <input type="text" name="universal_attribute" id="universal_attribute" class="form-control" value="">
+                </div>
+            </div>
+
+            <br>
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <input type="button" name="system_setup" id="system_setup" class="btn btn-primary btn-lg" value="Setup System">
+
+                </div>
+            </div>
+        </form>
+    </div>
+
+        <!-- Modal -->
+    <div class="modal modal-alert fade" id="setup_modal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+      <div class="modal-dialog">
+
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <div class="modal-title col-md-10">Confirm transaction details, enter a blockchain node url and click on "Confirm Transaction" to finalize your transaction.</div>
+            <button type="button" class="close col-md-2" data-dismiss="modal" aria-hidden="true">&times;</button>
+          </div>
+
+          <div class="modal-body">
+
+            <form id="confirmation_setup_transaction_form">
+
+                <div class="row">
+                  <label class="col-sm-12">System Public Key:</label>
+                  <div class="col-sm-12">
+                    <input type="text" name="confirmation_admin_public_key" id="confirmation_admin_public_key" rows="2" class="form-control" readonly>
+
+                  </div>
+                </div>
+                <div class="row">
+                  <label class="col-sm-12">Timestamp:</label>
+                  <div class="col-sm-12">
+                    <input type="text" name="confirmation_timestamp" id="confirmation_timestamp" rows="2" class="form-control" readonly>
+
+                  </div>
+                </div>
+
+                <div class="row">
+                  <label class="col-sm-12">Universal Attribute:</label>
+                  <div class="col-sm-12">
+                    <input type="text" name="confirmation_universal_attribute" id="confirmation_universal_attribute" rows="2" class="form-control" readonly>
+                  </div>
+                </div>
+                <div class="row">
+                  <label class="col-sm-12">Signature:</label>
+                  <div class="col-sm-12">
+                    <input type="text" name="transaction_signature" id="transaction_signature" rows="2" class="form-control" readonly>
+                  </div>
+                </div>
+            </form>
+
+            <div class="row">
+              <label class="col-sm-12">Blockchain Node URL:</label>
+              <div class="col-sm-12">
+                <input type="text" name="node_url" id="node_url" rows="2" class="form-control" value="http://127.0.0.1:5002">
+              </div>
+            </div>
+
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+            <button type="button" id="button_confirm_setup_transaction" class="btn btn-success">Confirm Transaction</button>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+    <!-- Alert Message for successful transaction -->
+    <div class="modal modal-alert fade" id="success_transaction_modal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          </div>
+
+          <div class="modal-body">
+            <div class="alert alert-success" role="alert">
+              <h4 class="alert-heading">Successful Transaction!</h4>
+              <p>You successfully completed your transaction. It will be added to the next block.</p>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" id="confirm_transaction" class="btn btn-success" data-dismiss="modal">OK</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <script src="/static/vendor/jquery/jquery.min.js"></script>
+    <script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/vendor/DataTables/js/datatables.min.js"></script>
+    <script src="/static/vendor/DataTables/js/ellipsis.js"></script>
+    <script>
+        $(function() {
+            $('#generate_key').click(function() {
+                $.ajax({
+                    url: '/create_master_key',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: $('#key_generator_form').serialize(),
+                    success: function(response) {
+                        document.getElementById('admin_public_key').value = response['public_key'];
+                        document.getElementById('admin_private_key').value = response['master_key'];
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+
+            $("#system_setup").click(function() {
+                $.ajax({
+                    url: "/system_setup",
+                    type: "POST",
+                    dataType: 'json',
+                    data: $('#setup_transaction_form').serialize(),
+                    success: function(response) {
+                        document.getElementById('confirmation_admin_public_key').value = response['transaction']['admin_public_key'];
+                        document.getElementById('confirmation_timestamp').value = response['transaction']['timestamp'];
+                        document.getElementById('confirmation_universal_attribute').value = response['transaction']['universal_attribute'];
+                        document.getElementById('transaction_signature').value = response['signature'];
+                        $('#setup_modal').modal('show');
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+
+            $('#button_confirm_setup_transaction').click(function() {
+                $.ajax({
+                    url: document.getElementById('node_url').value + '/setup_transaction',
+                    type: 'POST',
+                    dataType: 'json',
+                    header: {'Access-Control-Allow-Origin': '*'},
+                    data: $('#confirmation_setup_transaction_form').serialize(),
+                    success: function(response) {
+                        $('#basic_modal').modal('hide');
+                        $('#success_transaction_modal').modal('show');
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
